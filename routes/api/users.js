@@ -48,4 +48,31 @@ router.post("/register", (req, res) => {
   });
 });
 
+//@router GET api/users/login
+//@desc   Login User / Returning Token
+//access  public
+router.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  //Find The User by Email
+  User.findOne({ email: email }).then(user => {
+    //Check for User
+    if (!user) {
+      return res.status(404).json({ email: "User Email Not Found" }); //Send an Error Status
+    }
+
+    //Check Password
+    bcrypt
+      .compare(password, user.password) //(password,hash password)
+      .then(isMatch => {
+        if (isMatch) {
+          res.json({ msg: "Success" });
+        } else {
+          res.status(404).json({ password: "Password Incorrect" });
+        }
+      });
+  });
+});
+
 module.exports = router;
