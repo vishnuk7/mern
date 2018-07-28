@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
-
+const password = require("passport");
 //Load Models
 const User = require("../../models/User");
 
@@ -96,5 +96,21 @@ router.post("/login", (req, res) => {
       });
   });
 });
+
+//@router GET api/users/current
+//@desc   Return Current User
+//access  Private
+
+router.get(
+  "/current",
+  password.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email
+    });
+  }
+);
 
 module.exports = router;
